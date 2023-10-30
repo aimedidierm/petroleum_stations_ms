@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class manager-nav extends Component
+class employee-nav extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class manager-nav extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.manager-nav');
+        return view('components.employee-nav');
     }
 }
