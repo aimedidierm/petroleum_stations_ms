@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $data = User::where('role', 'employee')->get();
+        $data->load('address');
+        return view('admin.employees', ['employees' => $data]);
     }
 
     /**
@@ -29,7 +32,31 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'phone' => 'required|string',
+            'email' => 'required|string|email|unique:users,email',
+            'province' => 'required|string',
+            'district' => 'required|string',
+            'sector' => 'required|string',
+            'cell' => 'required|string',
+            'village' => 'required|string',
+        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->password = 'password';
+        $user->save();
+        $userAddress = new UserAddress();
+        $userAddress->province = $request->province;
+        $userAddress->district = $request->district;
+        $userAddress->sector = $request->sector;
+        $userAddress->cell = $request->cell;
+        $userAddress->village = $request->village;
+        $userAddress->user_id = $user->id;
+        $userAddress->save();
+        return redirect('/admin/employees');
     }
 
     /**
@@ -53,6 +80,49 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+        if (Auth::user()->role == 'admin') {
+            $request->validate([
+                'card' => 'required|string|unique:users,card',
+                'name' => 'required|string',
+                'userId' => 'required|numeric'
+            ]);
+            $user = User::find($request->userId);
+            if ($user) {
+                $user->name = $request->name;
+                $user->card = $request->card;
+                $user->update();
+                return redirect('/admin/employees');
+            } else {
+                return back()->withErrors('User not found not match');
+            }
+        } else {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'required|numeric',
+                'password' => 'required|string',
+                'confirmPassword' => 'required|string'
+            ]);
+            $user = User::find(Auth::id());
+            if ($request->password == $request->confirmPassword) {
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->phone;
+                $user->password = $request->password;
+                $user->update();
+                if (Auth::user()->role == 'admin') {
+                    return redirect('/admin/settings');
+                } else {
+                    return redirect('/employee/settings');
+                }
+            } else {
+                return back()->withErrors('Passwords not match');
+            }
+        }
+    }
+
+    public function adminUpdate(Request $request)
+    {
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
@@ -66,11 +136,8 @@ class UserController extends Controller
             $user->email = $request->email;
             $user->phone = $request->phone;
             $user->password = $request->password;
-            if (Auth::user()->role == 'admin') {
-                return redirect('/admin/settings');
-            } else {
-                return redirect('/employee/settings');
-            }
+            $user->update();
+            return redirect('/admin/settings');
         } else {
             return back()->withErrors('Passwords not match');
         }
@@ -79,8 +146,15 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $id)
     {
-        //
+        if ($id) {
+            $userAddress = UserAddress::where('user_id', $id->id);
+            $userAddress->delete();
+            $id->delete();
+            return redirect('/admin/employees');
+        } else {
+            return back()->withErrors('User not found');
+        }
     }
 }

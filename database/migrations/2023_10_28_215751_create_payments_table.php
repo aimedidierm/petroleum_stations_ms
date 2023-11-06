@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('payments', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->timestamps();
-        // });
+        Schema::create('payments', function (Blueprint $table) {
+            $table->id();
+            $table->float('amount');
+            $table->enum('status', ['pending', 'payed']);
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->on('users')->references('id')->onDelete("restrict");
+            $table->timestamps();
+        });
     }
 
     /**

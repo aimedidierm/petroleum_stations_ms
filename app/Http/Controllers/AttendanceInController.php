@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
+use App\Models\AttendanceIn;
 use Illuminate\Http\Request;
 
-class AttendanceController extends Controller
+class AttendanceInController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = [];
-        return view('admin.dashboard', ['data' => $data]);
+        //
     }
 
     /**
@@ -35,7 +34,7 @@ class AttendanceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Attendance $attendance)
+    public function show(AttendanceIn $attendanceIn)
     {
         //
     }
@@ -43,7 +42,7 @@ class AttendanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Attendance $attendance)
+    public function edit(AttendanceIn $attendanceIn)
     {
         //
     }
@@ -51,7 +50,7 @@ class AttendanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Attendance $attendance)
+    public function update(Request $request, AttendanceIn $attendanceIn)
     {
         //
     }
@@ -59,7 +58,7 @@ class AttendanceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Attendance $attendance)
+    public function destroy(AttendanceIn $attendanceIn)
     {
         //
     }
