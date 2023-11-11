@@ -12,8 +12,9 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $data = [];
-        return view('admin.dashboard', ['data' => $data]);
+        $employee = Attendance::get();
+        $employee->load('employee');
+        return view('admin.dashboard', ['employees' => $employee]);
     }
 
     /**

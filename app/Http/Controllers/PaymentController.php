@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
@@ -12,7 +13,13 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        if (Auth::user()->role == 'admin') {
+            $payments = Payment::latest()->get();
+            $payments->load('user');
+            return view('admin.payments', ['payments' => $payments]);
+        } else {
+            # code...
+        }
     }
 
     /**

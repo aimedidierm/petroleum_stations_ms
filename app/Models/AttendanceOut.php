@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class AttendanceOut extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 }
