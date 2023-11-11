@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
@@ -12,9 +13,14 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $employee = Attendance::get();
-        $employee->load('employee');
-        return view('admin.dashboard', ['employees' => $employee]);
+        if (Auth::user()->role == 'admin') {
+            $employee = Attendance::get();
+            $employee->load('employee');
+            return view('admin.dashboard', ['employees' => $employee]);
+        } else {
+            $attendance = Attendance::where('user_id', Auth::id())->get();
+            return view('employee.attendance', ['attendances' => $attendance]);
+        }
     }
 
     /**

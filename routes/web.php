@@ -22,8 +22,9 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
 
 Route::group(["prefix" => "employee", "middleware" => ["auth", "employeeCheck"], "as" => "employee."], function () {
     Route::view('/', 'employee.dashboard');
-    Route::view('/payments', 'employee.payments');
-    Route::view('/attendance', 'employee.attendance');
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+    Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::view('/settings', 'settings');
     Route::put('/settings', [UserController::class, 'update']);
 });
