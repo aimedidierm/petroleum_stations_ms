@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             'sector' => 'Remera',
             'cell' => 'Rukiri 1',
             'village' => 'Kisimenti',
-            'User_id' => $user->id,
+            'user_id' => $user->id,
         ]);
     }
 }
