@@ -5,18 +5,16 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClientSecureBearSSL.h>
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
 #include <ArduinoJson.h>
 
 
-#define RST_PIN         D3
-#define SS_PIN          D4
+#define RST_PIN         D0
+#define SS_PIN          D8
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
-LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 const char* ssid = "Balance";
 const char* password = "balance123";
-int buzzerPin = D0;
+int buzzerPin = D3;
 String content = "";
 
 
@@ -26,36 +24,32 @@ void setup()
   SPI.begin();
   pinMode(buzzerPin, OUTPUT);
   mfrc522.PCD_Init();
-  lcd.init();
-  lcd.init();
-  lcd.clear();
-  lcd.backlight();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  lcd.setCursor(0, 0);
-  lcd.print("Connecting to");
-  lcd.setCursor(0, 1);
-  lcd.print("WiFi network");
+//  lcd.setCursor(0, 0);
+//  lcd.print("Connecting to");
+//  lcd.setCursor(0, 1);
+//  lcd.print("WiFi network");
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
   }
-  lcd.clear(),
-            lcd.print("System");
-  lcd.setCursor(0, 1);
-  lcd.print("Starting");
-  delay(1000);
-  lcd.clear(),
-            lcd.print("System");
-  lcd.setCursor(0, 1);
-  lcd.print("Ready");
-  delay(2000);
-  lcd.clear(),
-            lcd.print("System");
-  lcd.setCursor(0, 1);
-  lcd.print("Ready");
-  delay(3000);
-  lcd.clear(),
-            lcd.print("Kozaho ikarita");
+//  lcd.clear(),
+//  lcd.print("System");
+//  lcd.setCursor(0, 1);
+//  lcd.print("Starting");
+//  delay(1000);
+//  lcd.clear(),
+//  lcd.print("System");
+//  lcd.setCursor(0, 1);
+//  lcd.print("Ready");
+//  delay(2000);
+//  lcd.clear(),
+//  lcd.print("System");
+//  lcd.setCursor(0, 1);
+//  lcd.print("Ready");
+//  delay(3000);
+//  lcd.clear(),
+//  lcd.print("Tap card");
 }
 void loop()
 {
@@ -74,10 +68,11 @@ void readcard() {
     content += (mfrc522.uid.uidByte[i] < 0x10 ? "0" : "");
     content += String(mfrc522.uid.uidByte[i], HEX);
   }
-  lcd.clear(),
-            lcd.print("Tegereza");
-  lcd.setCursor(0, 1);
-  lcd.print("Kureba amakuru");
+  Serial.println("Card detected");
+//  lcd.clear(),
+//  lcd.print("Loading");
+//  lcd.setCursor(0, 1);
+//  lcd.print("Sending data");
   updateStatus();
 }
 
@@ -92,7 +87,7 @@ void updateStatus() {
 
     Serial.println("[HTTPS] begin...");
 
-    if (http.begin(*client, "https://ruth.itaratec.com/api/status")) {  // HTTPS
+    if (http.begin(*client, "https://gas.itaratec.com/api/attend")) {  // HTTPS
       Serial.println(content);
       Serial.println("[HTTPS] POST...");
 
@@ -130,36 +125,36 @@ void updateStatus() {
 
           if (cardAllowed == true)
           {
-            lcd.clear(),
-            lcd.print("Uremerewe!");
-            lcd.setCursor(0, 1);
-            lcd.print(message);
-            playBeep(1000, 500);
-            delay(3000);
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Kozaho ikarita");
+//            lcd.clear(),
+//            lcd.print("Allowed!");
+//            lcd.setCursor(0, 1);
+//            lcd.print(message);
+            playBeep1();
+//            delay(3000);
+//            lcd.clear();
+//            lcd.setCursor(0, 0);
+//            lcd.print("Tap card");
             readcard();
           }
           else {
-            lcd.clear(),
-            lcd.print("Ikibazo");
-            lcd.setCursor(0, 1);
-            lcd.print(message);
-            playAlarm();
-            delay(3000);
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Kozaho ikarita");
+//            lcd.clear(),
+//            lcd.print("Error");
+//            lcd.setCursor(0, 1);
+//            lcd.print(message);
+            playBeep2();
+//            delay(3000);
+//            lcd.clear();
+//            lcd.setCursor(0, 0);
+//            lcd.print("Tap card");
             readcard();
           }
         }
       } else {
         content = "";
         Serial.printf("[HTTPS] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-        lcd.clear(),
-                  lcd.print("Ntibikunze");
-        delay(3000);
+//        lcd.clear(),
+//        lcd.print("Fail");
+        playBeep2();
         readcard();
       }
 
@@ -167,23 +162,33 @@ void updateStatus() {
       http.end();
     } else {
       Serial.println("[HTTPS] Unable to connect");
-      lcd.clear(),
-                lcd.print("Guhuza ntibikunze");
-      delay(3000);
+//      lcd.clear(),
+//      lcd.print("Unable to connect");
+       playBeep2();
+//      delay(3000);
       readcard();
     }
   }
 }
 
-void playBeep(int frequency, int duration) {
-  tone(buzzerPin, frequency, duration);
-  delay(duration);
-  noTone(buzzerPin);
+void playBeep1() {
+  digitalWrite(buzzerPin, HIGH);
+  delay(3000);
+  digitalWrite(buzzerPin, LOW);
+  delay(1000);
 }
 
-void playAlarm() {
-  for (int i = 0; i < 3; i++) {
-    playBeep(1000, 200);
-    delay(200);
-  }
+void playBeep2() {
+  digitalWrite(buzzerPin, HIGH);
+  delay(400);
+  digitalWrite(buzzerPin, LOW);
+  delay(100);
+  digitalWrite(buzzerPin, HIGH);
+  delay(400);
+  digitalWrite(buzzerPin, LOW);
+  delay(100);
+  digitalWrite(buzzerPin, HIGH);
+  delay(400);
+  digitalWrite(buzzerPin, LOW);
+  delay(100);
 }
