@@ -6,11 +6,13 @@
 #include <WiFiClientSecureBearSSL.h>
 #include <Wire.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal_I2C.h>
 
 
 #define RST_PIN         D0
 #define SS_PIN          D8
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 const char* ssid = "Balance";
 const char* password = "balance123";
@@ -24,32 +26,36 @@ void setup()
   SPI.begin();
   pinMode(buzzerPin, OUTPUT);
   mfrc522.PCD_Init();
+  lcd.init();
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-//  lcd.setCursor(0, 0);
-//  lcd.print("Connecting to");
-//  lcd.setCursor(0, 1);
-//  lcd.print("WiFi network");
+ lcd.setCursor(0, 0);
+ lcd.print("Connecting to");
+ lcd.setCursor(0, 1);
+ lcd.print("WiFi network");
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
   }
-//  lcd.clear(),
-//  lcd.print("System");
-//  lcd.setCursor(0, 1);
-//  lcd.print("Starting");
-//  delay(1000);
-//  lcd.clear(),
-//  lcd.print("System");
-//  lcd.setCursor(0, 1);
-//  lcd.print("Ready");
-//  delay(2000);
-//  lcd.clear(),
-//  lcd.print("System");
-//  lcd.setCursor(0, 1);
-//  lcd.print("Ready");
-//  delay(3000);
-//  lcd.clear(),
-//  lcd.print("Tap card");
+ lcd.clear(),
+ lcd.print("System");
+ lcd.setCursor(0, 1);
+ lcd.print("Starting");
+ delay(1000);
+ lcd.clear(),
+ lcd.print("System");
+ lcd.setCursor(0, 1);
+ lcd.print("Ready");
+ delay(2000);
+ lcd.clear(),
+ lcd.print("System");
+ lcd.setCursor(0, 1);
+ lcd.print("Ready");
+ delay(3000);
+ lcd.clear(),
+ lcd.print("Tap card");
 }
 void loop()
 {
@@ -69,10 +75,10 @@ void readcard() {
     content += String(mfrc522.uid.uidByte[i], HEX);
   }
   Serial.println("Card detected");
-//  lcd.clear(),
-//  lcd.print("Loading");
-//  lcd.setCursor(0, 1);
-//  lcd.print("Sending data");
+ lcd.clear(),
+ lcd.print("Loading");
+ lcd.setCursor(0, 1);
+ lcd.print("Sending data");
   updateStatus();
 }
 
@@ -84,10 +90,11 @@ void updateStatus() {
     // Ignore SSL certificate validation (for testing only)
     client->setInsecure();
     HTTPClient http;
+    http.setTimeout(10000);
 
     Serial.println("[HTTPS] begin...");
 
-    if (http.begin(*client, "https://gas.itaratec.com/api/attend")) {  // HTTPS
+      if (http.begin(*client, "https://192.168.43.83:8000/api/attend")) {  // HTTPS
       Serial.println(content);
       Serial.println("[HTTPS] POST...");
 
@@ -104,6 +111,7 @@ void updateStatus() {
       int httpCode = http.POST(jsonPayload);
 
       // Check the HTTP response code
+      Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
       if (httpCode > 0) {
         content = "";
         Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
@@ -125,35 +133,35 @@ void updateStatus() {
 
           if (cardAllowed == true)
           {
-//            lcd.clear(),
-//            lcd.print("Allowed!");
-//            lcd.setCursor(0, 1);
-//            lcd.print(message);
+           lcd.clear(),
+           lcd.print("Allowed!");
+           lcd.setCursor(0, 1);
+           lcd.print(message);
             playBeep1();
-//            delay(3000);
-//            lcd.clear();
-//            lcd.setCursor(0, 0);
-//            lcd.print("Tap card");
+           delay(3000);
+           lcd.clear();
+           lcd.setCursor(0, 0);
+           lcd.print("Tap card");
             readcard();
           }
           else {
-//            lcd.clear(),
-//            lcd.print("Error");
-//            lcd.setCursor(0, 1);
-//            lcd.print(message);
+           lcd.clear(),
+           lcd.print("Error");
+           lcd.setCursor(0, 1);
+           lcd.print(message);
             playBeep2();
-//            delay(3000);
-//            lcd.clear();
-//            lcd.setCursor(0, 0);
-//            lcd.print("Tap card");
+           delay(3000);
+           lcd.clear();
+           lcd.setCursor(0, 0);
+           lcd.print("Tap card");
             readcard();
           }
         }
       } else {
         content = "";
         Serial.printf("[HTTPS] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-//        lcd.clear(),
-//        lcd.print("Fail");
+       lcd.clear(),
+       lcd.print("Fail");
         playBeep2();
         readcard();
       }
@@ -162,8 +170,8 @@ void updateStatus() {
       http.end();
     } else {
       Serial.println("[HTTPS] Unable to connect");
-//      lcd.clear(),
-//      lcd.print("Unable to connect");
+      lcd.clear(),
+      lcd.print("Unable to connect");
        playBeep2();
 //      delay(3000);
       readcard();
