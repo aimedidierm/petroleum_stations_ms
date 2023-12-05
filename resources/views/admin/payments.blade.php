@@ -18,6 +18,9 @@
                             Employee
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Type
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Amount
                         </th>
                     </tr>
@@ -26,7 +29,7 @@
                     @if ($payments->isEmpty())
 
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th colspan="3" scope="row"
+                        <th colspan="4" scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             No data
                         </th>
@@ -39,6 +42,9 @@
                         </th>
                         <td class="px-6 py-4">
                             {{$payment->user->name}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{$payment->type}}
                         </td>
                         <td class="px-6 py-4">
                             {{$payment->amount}} Rwf

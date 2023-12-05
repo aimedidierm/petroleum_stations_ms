@@ -53,14 +53,15 @@
                             <td class="px-6 py-4">
                                 <div class="form-check form-check-inline ">
                                     @if (isset($check_attd))
-                                    <i class="fa fa-check text-green-400"></i>
+                                    {{$date_picker =
+                                    \Carbon\Carbon::createFromDate($check_attd->time_in)->format('H:i:s')}}
                                     @else
                                     <i class="fas fa-times text-red-400"></i>
                                     @endif
                                 </div>
                                 <div class="form-check form-check-inline">
                                     @if (isset($check_leave))
-                                    <i class="fa fa-check text-green-400"></i>
+                                    {{\Carbon\Carbon::createFromDate($check_leave->time_out)->format('H:i:s')}}
                                     @else
                                     <i class="fas fa-times text-red-400"></i>
                                     @endif

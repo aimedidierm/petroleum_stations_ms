@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\AttendanceIn;
 use App\Models\AttendanceOut;
+use App\Models\BlankCard;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -75,10 +76,21 @@ class HardwareController extends Controller
                 ], 200);
             }
         } else {
-            return response()->json([
-                'card_allowed' => false,
-                'message' => 'Card not found',
-            ], 200);
+            $card = BlankCard::where('card', $request->card)->first();
+            if ($card) {
+                return response()->json([
+                    'card_allowed' => false,
+                    'message' => 'Blank card',
+                ], 200);
+            } else {
+                BlankCard::create([
+                    "card" => $request->card
+                ]);
+                return response()->json([
+                    'card_allowed' => false,
+                    'message' => 'Card registered',
+                ], 200);
+            }
         }
     }
 }

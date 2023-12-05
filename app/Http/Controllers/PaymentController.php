@@ -38,9 +38,11 @@ class PaymentController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric',
+            'type' => 'required|string',
         ]);
         $payment = new Payment;
         $payment->amount = $request->amount;
+        $payment->type = $request->type;
         $payment->status = 'payed';
         $payment->user_id = Auth::id();
         $payment->created_at = now();

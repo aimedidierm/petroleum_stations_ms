@@ -15,6 +15,9 @@
                             Date
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Type
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Amount
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -26,7 +29,7 @@
                     @if ($payments->isEmpty())
 
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th colspan="3" scope="row"
+                        <th colspan="4" scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             No data
                         </th>
@@ -37,6 +40,9 @@
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{$payment->created_at}}
                         </th>
+                        <td class="px-6 py-4">
+                            {{$payment->type}}
+                        </td>
                         <td class="px-6 py-4">
                             {{$payment->amount}} Rwf
                         </td>

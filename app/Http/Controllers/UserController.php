@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlankCard;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class UserController extends Controller
     {
         $data = User::where('role', 'employee')->get();
         $data->load('address');
-        return view('admin.employees', ['employees' => $data]);
+        $blankCards = BlankCard::latest()->get();
+        return view('admin.employees', ['employees' => $data, 'blankCards' => $blankCards]);
     }
 
     /**
@@ -41,11 +43,13 @@ class UserController extends Controller
             'sector' => 'required|string',
             'cell' => 'required|string',
             'village' => 'required|string',
+            'card' => 'required|string'
         ]);
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
+        $user->card = $request->card;
         $user->password = 'password';
         $user->save();
         $userAddress = new UserAddress();
@@ -56,6 +60,8 @@ class UserController extends Controller
         $userAddress->village = $request->village;
         $userAddress->user_id = $user->id;
         $userAddress->save();
+        $card = BlankCard::where('card', $request->card)->first();
+        $card->delete();
         return redirect('/admin/employees');
     }
 
