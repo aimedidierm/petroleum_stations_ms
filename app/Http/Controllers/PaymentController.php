@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,14 +22,6 @@ class PaymentController extends Controller
             $payments = Payment::latest()->where('user_id', Auth::id())->get();
             return view('employee.payments', ['payments' => $payments]);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -51,35 +44,11 @@ class PaymentController extends Controller
         return redirect('/employee/payments');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
+    public function report()
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        $payments = Payment::latest()->get();
+        $payments->load('user');
+        $pdf = Pdf::loadView('admin.payments_report', ['payments' => $payments]);
+        return $pdf->download('report.pdf');
     }
 }

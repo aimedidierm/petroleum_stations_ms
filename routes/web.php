@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -16,8 +17,11 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
     Route::put('/employees', [UserController::class, 'update']);
     Route::get('/employees/delete/{id}', [UserController::class, 'destroy']);
     Route::get('/payments', [PaymentController::class, 'index']);
+    Route::resource('/expenses', ExpenseController::class)->only('index', 'store');
     Route::view('/settings', 'settings');
     Route::put('/settings', [UserController::class, 'adminUpdate']);
+    Route::get('/report/expenses', [ExpenseController::class, 'report']);
+    Route::get('/report/payments', [PaymentController::class, 'report']);
 });
 
 Route::group(["prefix" => "employee", "middleware" => ["auth", "employeeCheck"], "as" => "employee."], function () {
