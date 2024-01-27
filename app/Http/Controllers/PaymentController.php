@@ -44,9 +44,12 @@ class PaymentController extends Controller
         return redirect('/employee/payments');
     }
 
-    public function report()
+    public function report(Request $request)
     {
-        $payments = Payment::latest()->get();
+        $request->validate([
+            'status' => 'required|string|in:Cash,Momo,Card',
+        ]);
+        $payments = Payment::latest()->where('type', $request->status)->get();
         $payments->load('user');
         $pdf = Pdf::loadView('admin.payments_report', ['payments' => $payments]);
         return $pdf->download('report.pdf');

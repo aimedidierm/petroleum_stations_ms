@@ -36,7 +36,7 @@
 <body class="bg-opacity-50">
     <div class="container mx-auto p-4">
         <center>
-            <h2 class="text-2xl font-semibold mb-4">List of all expenses</h2>
+            <h2 class="text-2xl font-semibold mb-4">List of all payments</h2>
         </center>
         <table style="width: 100%" class="w-full table-auto border border-collapse">
             <thead>

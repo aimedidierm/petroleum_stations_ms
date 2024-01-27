@@ -41,4 +41,14 @@ class ExpenseController extends Controller
         $pdf = Pdf::loadView('admin.expenses_report', ['expenses' => $expenses]);
         return $pdf->download('report.pdf');
     }
+
+    public function destroy(Expense $id)
+    {
+        if ($id) {
+            $id->delete();
+            return redirect('/admin/expenses');
+        } else {
+            return back()->withErrors('Expense not found');
+        }
+    }
 }

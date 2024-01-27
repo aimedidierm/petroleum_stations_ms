@@ -18,10 +18,11 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
     Route::get('/employees/delete/{id}', [UserController::class, 'destroy']);
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::resource('/expenses', ExpenseController::class)->only('index', 'store');
+    Route::get('/expenses/delete/{id}', [ExpenseController::class, 'destroy']);
     Route::view('/settings', 'settings');
     Route::put('/settings', [UserController::class, 'adminUpdate']);
     Route::get('/report/expenses', [ExpenseController::class, 'report']);
-    Route::get('/report/payments', [PaymentController::class, 'report']);
+    Route::post('/report/payments', [PaymentController::class, 'report']);
 });
 
 Route::group(["prefix" => "employee", "middleware" => ["auth", "employeeCheck"], "as" => "employee."], function () {

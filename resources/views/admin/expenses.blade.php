@@ -82,13 +82,16 @@
                         <th scope="col" class="px-6 py-3">
                             Amount
                         </th>
+                        <th scope="col" class="px-6 py-3">
+                            Action
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($expenses->isEmpty())
 
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th colspan="3" scope="row"
+                        <th colspan="4" scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             No data
                         </th>
@@ -104,6 +107,10 @@
                         </td>
                         <td class="px-6 py-4">
                             {{$expense->amount}} Rwf
+                        </td>
+                        <td class="px-6 py-4 space-x-4">
+                            <a href="/admin/expenses/delete/{{$expense->id}}"
+                                class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
                         </td>
                     </tr>
                     @endforeach
