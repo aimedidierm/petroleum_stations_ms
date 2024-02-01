@@ -23,6 +23,7 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
     Route::put('/settings', [UserController::class, 'adminUpdate']);
     Route::get('/report/expenses', [ExpenseController::class, 'report']);
     Route::post('/report/payments', [PaymentController::class, 'report']);
+    Route::post('/report/attendance', [AttendanceController::class, 'report']);
 });
 
 Route::group(["prefix" => "employee", "middleware" => ["auth", "employeeCheck"], "as" => "employee."], function () {

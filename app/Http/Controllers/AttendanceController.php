@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -69,5 +70,18 @@ class AttendanceController extends Controller
     public function destroy(Attendance $attendance)
     {
         //
+    }
+
+    public function report(Request $request)
+    {
+        $reportDate = $request->reportDate;
+        [$year, $month] = explode('-', $reportDate);
+        $employees = Attendance::whereYear('created_at', '=', $year)
+            ->whereMonth('created_at', '=', $month)
+            ->get();
+        $employees->load('employee');
+        // return view('admin.attendance_report', ['employees' => $employees]);
+        $pdf = Pdf::loadView('admin.attendance_report', ['employees' => $employees])->setPaper('a2', 'landscape');
+        return $pdf->download('report.pdf');
     }
 }
